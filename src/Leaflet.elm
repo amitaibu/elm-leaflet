@@ -52,13 +52,18 @@ update action model =
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div [id "map"] [text "Leaflet"]
+  div []
+    [ div [style myStyle, id "map"] []
+    , div [] [text "Leaflet"]
+    ]
+
 
 
 myStyle : List (String, String)
 myStyle =
     [ ("width", "600px")
     , ("height", "400px")
+    -- , ("id", "map")
     ]
 
 -- EFFECTS
