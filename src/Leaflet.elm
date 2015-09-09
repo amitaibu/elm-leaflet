@@ -7,44 +7,48 @@ import Html.Events exposing (on, onClick, targetValue)
 import Http
 import Json.Decode as Json exposing ((:=))
 import String exposing (length)
+import Task exposing (map)
 
 
 -- MODEL
 
-type alias Marker =
+type alias Model =
   { x : Float
   , y : Float
   }
 
 
-
-type alias Model =
-  { marker : Marker
-  }
-
-
 initialModel : Model
 initialModel =
-  Model (Marker 51.5 -0.09)
+  Model 51.5 -0.09
 
 init : (Model, Effects Action)
 init =
   ( initialModel
-  , Effects.none
+  , Effects.batch [tick]
   )
 
 
 -- UPDATE
 
 type Action
-  = IncrementX Int
+  = IncrementX Float
+  | Tick
 
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    IncrementX x ->
-      (model, Effects.none)
+    IncrementX increment ->
+      ( {model | x <- (model.x + increment)}
+      , Effects.none
+      )
+
+    Tick ->
+      let
+        (model', _) = update (IncrementX 0.1) model
+      in
+        (model', Effects.batch [tick])
 
 -- VIEW
 
@@ -55,6 +59,7 @@ view address model =
   div []
     [ div [style myStyle, id "map"] []
     , div [] [text "Leaflet"]
+    , div [] [text ("X: " ++ toString(model.x))]
     ]
 
 
@@ -63,7 +68,12 @@ myStyle : List (String, String)
 myStyle =
     [ ("width", "600px")
     , ("height", "400px")
-    -- , ("id", "map")
     ]
 
 -- EFFECTS
+
+tick : Effects Action
+tick =
+  Task.sleep (1 * 1000)
+    |> Task.map (\_ -> Tick)
+    |> Effects.task
