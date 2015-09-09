@@ -1,3 +1,4 @@
+module Main where
 
 import Effects exposing (Never)
 import Leaflet exposing (init, update, view)
@@ -23,5 +24,5 @@ port tasks =
   app.tasks
 
 -- interactions with Leaflet
-port setMarkers : Signal Leaflet.Model
-port setMarkers = app.model
+port setMarker : Signal Leaflet.Model
+port setMarker = app.model

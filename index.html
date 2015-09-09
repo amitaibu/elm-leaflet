@@ -17,6 +17,13 @@
 var storedState = localStorage.getItem('elm-todo-state');
 var startingState = storedState ? JSON.parse(storedState) : null;
 
+var elmApp = Elm.fullscreen(Elm.Main, {});
+
+elmApp.ports.setMarker.subscribe(function(state) {
+    localStorage.setItem('elm-todo-state', JSON.stringify(state));
+});
+
+
 // Leaflet
 var map = L.map('map').setView([51.505, -0.09], 13);
 
@@ -57,12 +64,6 @@ function onMapClick(e) {
 map.on('click', onMapClick);
 
 
-
-var elmApp = Elm.fullscreen(Elm.Todo, { getStorage: startingState });
-
-elmApp.ports.setMarker.subscribe(function(state) {
-    localStorage.setItem('elm-todo-state', JSON.stringify(state));
-});
 
 </script>
 
