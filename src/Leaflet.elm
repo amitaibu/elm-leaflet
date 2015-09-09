@@ -58,7 +58,6 @@ view : Signal.Address Action -> Model -> Html
 view address model =
   div []
     [ div [style myStyle, id "map"] []
-    , div [] [text "Leaflet"]
     , div [] [text ("Lat: " ++ toString(model.lat))]
     , div [] [text ("Lng: " ++ toString(model.lng))]
     ]
