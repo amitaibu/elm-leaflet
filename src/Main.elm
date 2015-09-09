@@ -21,3 +21,7 @@ main =
 port tasks : Signal (Task.Task Never ())
 port tasks =
   app.tasks
+
+-- interactions with Leaflet
+port setMarkers : Signal Leaflet.Model
+port setMarkers = app.model

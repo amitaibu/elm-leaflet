@@ -1,4 +1,4 @@
-module User where
+module Leaflet where
 
 import Effects exposing (Effects, Never)
 import Html exposing (..)
@@ -12,8 +12,8 @@ import String exposing (length)
 -- MODEL
 
 type alias Marker =
-  { x : Int
-  , y : Int
+  { x : Float
+  , y : Float
   }
 
 
@@ -52,7 +52,7 @@ update action model =
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div [class "map", myStyle] [text "Leaflet"]
+  div [id "map"] [text "Leaflet"]
 
 
 myStyle : List (String, String)
@@ -62,7 +62,3 @@ myStyle =
     ]
 
 -- EFFECTS
-
--- interactions with Leaflet
-port setMarkers : Signal Model
-port setMarkers = model
