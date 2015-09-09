@@ -15,12 +15,13 @@ import Task exposing (map)
 type alias Model =
   { lat : Float
   , lng : Float
+  , showMap : Bool
   }
 
 
 initialModel : Model
 initialModel =
-  Model 51.5 -0.09
+  Model 51.5 -0.09 True
 
 init : (Model, Effects Action)
 init =
@@ -34,6 +35,7 @@ init =
 type Action
   = IncrementLat Float
   | IncrementLng Float
+  | ToggleMap
   | Tick
 
 
@@ -50,12 +52,18 @@ update action model =
       , Effects.none
       )
 
+    ToggleMap ->
+      ( { model | showMap <- (not model.showMap)}
+      , Effects.none
+      )
+
     Tick ->
       let
         (model', _) = update (IncrementLat 0.001) model
         (model'', _) = update (IncrementLng 0.001) model'
       in
         (model'', Effects.batch [tick])
+
 
 -- VIEW
 
@@ -64,11 +72,20 @@ update action model =
 view : Signal.Address Action -> Model -> Html
 view address model =
   div []
-    [ div [style myStyle, id "map"] []
+    [ viewMap model.showMap
     , div [] [text ("Lat: " ++ toString(model.lat))]
     , div [] [text ("Lng: " ++ toString(model.lng))]
+    , button [onClick address ToggleMap] [text "Toggle Map"]
     ]
 
+
+viewMap : Bool -> Html
+viewMap show =
+  if show == True
+    then
+      div [style myStyle, id "map"] []
+    else
+      span [] []
 
 
 myStyle : List (String, String)
