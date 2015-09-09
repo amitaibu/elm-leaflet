@@ -13,8 +13,8 @@ import Task exposing (map)
 -- MODEL
 
 type alias Model =
-  { x : Float
-  , y : Float
+  { lat : Float
+  , lng : Float
   }
 
 
@@ -40,13 +40,13 @@ update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
     IncrementX increment ->
-      ( {model | x <- (model.x + increment)}
+      ( {model | lat <- (model.lat + increment)}
       , Effects.none
       )
 
     Tick ->
       let
-        (model', _) = update (IncrementX 0.1) model
+        (model', _) = update (IncrementX 0.001) model
       in
         (model', Effects.batch [tick])
 
@@ -59,7 +59,8 @@ view address model =
   div []
     [ div [style myStyle, id "map"] []
     , div [] [text "Leaflet"]
-    , div [] [text ("X: " ++ toString(model.x))]
+    , div [] [text ("Lat: " ++ toString(model.lat))]
+    , div [] [text ("Lng: " ++ toString(model.lng))]
     ]
 
 

@@ -19,8 +19,8 @@ var startingState = storedState ? JSON.parse(storedState) : null;
 
 var elmApp = Elm.fullscreen(Elm.Main, {});
 
-elmApp.ports.setMarker.subscribe(function(state) {
-    localStorage.setItem('elm-todo-state', JSON.stringify(state));
+elmApp.ports.setMarker.subscribe(function(model) {
+  marker.setLatLng(model);
 });
 
 
@@ -36,7 +36,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 }).addTo(map);
 
 
-L.marker([51.5, -0.09]).addTo(map)
+var marker = L.marker([51.5, -0.09]).addTo(map)
   .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
 L.circle([51.508, -0.11], 500, {
