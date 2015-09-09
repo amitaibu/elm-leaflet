@@ -85,7 +85,7 @@ viewMap show =
     then
       div [style myStyle, id "map"] []
     else
-      div [style myStyle] []
+      span [] []
 
 
 myStyle : List (String, String)
