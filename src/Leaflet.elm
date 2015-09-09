@@ -32,23 +32,30 @@ init =
 -- UPDATE
 
 type Action
-  = IncrementX Float
+  = IncrementLat Float
+  | IncrementLng Float
   | Tick
 
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    IncrementX increment ->
+    IncrementLat increment ->
       ( {model | lat <- (model.lat + increment)}
+      , Effects.none
+      )
+
+    IncrementLng increment ->
+      ( {model | lng <- (model.lng + increment)}
       , Effects.none
       )
 
     Tick ->
       let
-        (model', _) = update (IncrementX 0.001) model
+        (model', _) = update (IncrementLat 0.001) model
+        (model'', _) = update (IncrementLng 0.001) model'
       in
-        (model', Effects.batch [tick])
+        (model'', Effects.batch [tick])
 
 -- VIEW
 
