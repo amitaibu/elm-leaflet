@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, targetValue)
 import Http
 import Json.Decode as Json exposing ((:=))
+import Json.Encode exposing (..)
 import String exposing (length)
 import Task exposing (map)
 
@@ -64,12 +65,26 @@ update action model =
 view : Signal.Address Action -> Model -> Html
 view address model =
   div []
-    [ div [style myStyle, id "map"] []
+    [ Html.node "leaflet-map" [style myStyle]
+      [
+        Html.node "leaflet-marker" (markerProperties model) []
+      ]
     , div [] [text ("Lat: " ++ toString(model.lat))]
     , div [] [text ("Lng: " ++ toString(model.lng))]
     ]
 
+mapProperties : List (Attribute)
+mapProperties =
+  [ property "zoom" (Json.Encode.string "13")
+  ]
 
+
+markerProperties : Model -> List (Attribute)
+markerProperties model =
+  [ property "latitude" (Json.Encode.string (toString(model.lat)))
+  , property "longitude" (Json.Encode.string (toString(model.lng)))
+  , property "title" (Json.Encode.string "Marker!")
+  ]
 
 myStyle : List (String, String)
 myStyle =
