@@ -64,12 +64,21 @@ update action model =
 view : Signal.Address Action -> Model -> Html
 view address model =
   div []
-    [ div [style myStyle, id "map"] []
+    [ Html.node "leaflet-map" [style myStyle]
+      [
+        Html.node "leaflet-marker" [style (markerProperties model)] []
+      ]
     , div [] [text ("Lat: " ++ toString(model.lat))]
     , div [] [text ("Lng: " ++ toString(model.lng))]
     ]
 
 
+markerProperties : Model -> List (String, String)
+markerProperties model =
+  [ ("latitude", toString(model.lat))
+  , ("longitude", toString(model.lng))
+  , ("title", "Marker!")
+  ]
 
 myStyle : List (String, String)
 myStyle =
