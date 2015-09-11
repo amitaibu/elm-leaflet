@@ -73,6 +73,11 @@ view address model =
     , div [] [text ("Lng: " ++ toString(model.lng))]
     ]
 
+mapProperties : List (Attribute)
+mapProperties =
+  [ property "zoom" (Json.Encode.string "13")
+  ]
+
 
 markerProperties : Model -> List (Attribute)
 markerProperties model =
