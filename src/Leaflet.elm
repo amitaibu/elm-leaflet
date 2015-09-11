@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, targetValue)
 import Http
 import Json.Decode as Json exposing ((:=))
+import Json.Encode exposing (..)
 import String exposing (length)
 import Task exposing (map)
 
@@ -66,18 +67,18 @@ view address model =
   div []
     [ Html.node "leaflet-map" [style myStyle]
       [
-        Html.node "leaflet-marker" [style (markerProperties model)] []
+        Html.node "leaflet-marker" (markerProperties model) []
       ]
     , div [] [text ("Lat: " ++ toString(model.lat))]
     , div [] [text ("Lng: " ++ toString(model.lng))]
     ]
 
 
-markerProperties : Model -> List (String, String)
+markerProperties : Model -> List (Attribute)
 markerProperties model =
-  [ ("latitude", toString(model.lat))
-  , ("longitude", toString(model.lng))
-  , ("title", "Marker!")
+  [ property "latitude" (Json.Encode.string (toString(model.lat)))
+  , property "longitude" (Json.Encode.string (toString(model.lng)))
+  , property "title" (Json.Encode.string "Marker!")
   ]
 
 myStyle : List (String, String)
