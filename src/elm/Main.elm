@@ -18,11 +18,17 @@ app =
 main =
   app.html
 
+latSignal : Signal Float
+latSignal =
+  Signal.map .lat app.model
 
 port tasks : Signal (Task.Task Never ())
 port tasks =
   app.tasks
 
 -- interactions with Leaflet
-port setMarker : Signal Leaflet.Model
-port setMarker = app.model
+port setMarker : Signal Float
+port setMarker = latSignal
+
+port toggleMap : Signal Bool
+port toggleMap = Signal.map .showMap app.model
