@@ -2,44 +2,27 @@
 
 var elmApp = Elm.fullscreen(Elm.Main, {});
 
+// Maintain the map and marker state.
 var mapEl = undefined;
+var markerEl = undefined;
 
-var marker = undefined;
+elmApp.ports.setMarker.subscribe(function(marker) {
+  mapEl = mapEl || addMap();
 
-
-elmApp.ports.setMarker.subscribe(function(model) {
-  if (!mapEl) {
-    return;
-  }
-
-  if (!marker) {
-    marker = L.marker([model, -0.09]).addTo(mapEl);
+  if (!markerEl) {
+    markerEl = L.marker([marker.lat, marker.lng]).addTo(mapEl);
   }
   else {
-    marker.setLatLng([model, -0.09]);
+    markerEl.setLatLng([marker.lat, marker.lng]);
   }
-});
-
-elmApp.ports.toggleMap.subscribe(function(show) {
-  if (show && !mapEl) {
-    mapEl = addMap();
-  }
-  else if (!show && !!mapEl) {
-    mapEl.remove();
-    mapEl = undefined;
-    marker = undefined;
-  }
-
-
-
 });
 
 function addMap() {
   // Leaflet
-  var mapEl = L.map('map').setView([51.505, -0.09], 13);
+  var mapEl = L.map('map').setView([51.505, -0.09], 10);
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6IjZjNmRjNzk3ZmE2MTcwOTEwMGY0MzU3YjUzOWFmNWZhIn0.Y8bhBaUMqFiPrDRW9hieoQ', {
-    maxZoom: 18,
+    maxZoom: 10,
     id: 'mapbox.streets'
   }).addTo(mapEl);
 

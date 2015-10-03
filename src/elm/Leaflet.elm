@@ -12,17 +12,20 @@ import Task exposing (map)
 
 -- MODEL
 
-type alias Model =
-  { lat : Float
+type alias Marker =
+  { lat: Float
   , lng : Float
+  }
+
+type alias Model =
+  { marker : Marker
   , showMap : Bool
   }
 
 
 initialModel : Model
 initialModel =
-  { lat = 51.5
-  , lng = -0.09
+  { marker = Marker 51.5 -0.09
   , showMap = True
   }
 
@@ -45,25 +48,33 @@ type Action
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    IncrementLat increment ->
-      ( {model | lat <- (model.lat + increment)}
-      , Effects.none
-      )
+    IncrementLat val ->
+      let
+        marker = model.marker
+        marker' = { marker | lat <- marker.lat + val }
+      in
+        ( { model | marker <- marker' }
+        , Effects.none
+        )
 
-    IncrementLng increment ->
-      ( {model | lng <- (model.lng + increment)}
-      , Effects.none
-      )
+    IncrementLng val ->
+      let
+        marker = model.marker
+        marker' = { marker | lng <- marker.lng + val }
+      in
+        ( { model | marker <- marker' }
+        , Effects.none
+        )
 
     Tick ->
       let
         (model', _) = update (IncrementLat 0.001) model
         (model'', _) = update (IncrementLng 0.001) model'
       in
-        (model'', Effects.batch [tick])
+        (model'', Effects.none)
 
     Toggle ->
-      ( {model | showMap <- (not model.showMap)}
+      ( { model | showMap <- (not model.showMap) }
       , Effects.none
       )
 
@@ -81,8 +92,8 @@ view address model =
   in
   div []
     [ mapEl
-    , div [] [text ("Lat: " ++ toString(model.lat))]
-    , div [] [text ("Lng: " ++ toString(model.lng))]
+    , div [] [text ("Lat: " ++ toString(model.marker.lat))]
+    , div [] [text ("Lng: " ++ toString(model.marker.lng))]
     , button [ onClick address Toggle ] [ text "Toggle Map" ]
     , div [] [ text ("Toggle state:" ++ toString(model.showMap))]
     ]
