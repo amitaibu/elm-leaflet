@@ -87,7 +87,7 @@ view address model =
     , button [ onClick address ToggleMap ] [ text "Toggle Map" ]
     , button
         [ onClick address UnselectMarker
-        , disabled (model.selectedMarker == Nothing)
+        , disabled (model.selectedMarker == Nothing || not model.showMap)
         ]
         [ text "Unselect Marker" ]
     ]
