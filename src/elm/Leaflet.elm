@@ -52,6 +52,7 @@ init =
 type Action
   = ToggleMap
   | ToggleMarker (Maybe Int)
+  | UnselectMarker
 
 
 update : Action -> Model -> (Model, Effects Action)
@@ -64,6 +65,11 @@ update action model =
 
     ToggleMarker val ->
       ( { model | selectedMarker <- val }
+      , Effects.none
+      )
+
+    UnselectMarker ->
+      ( { model | selectedMarker <- Nothing }
       , Effects.none
       )
 
@@ -83,9 +89,12 @@ view address model =
   div []
     [ mapEl
     , button [ onClick address ToggleMap ] [ text "Toggle Map" ]
+    , button
+      [ onClick address UnselectMarker
+      , disabled (model.selectedMarker == Nothing)
+      ]
+      [ text "Unselect Marker" ]
     ]
-
-
 
 myStyle : List (String, String)
 myStyle =
