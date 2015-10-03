@@ -80,7 +80,7 @@ view address model =
     mapEl =
       if model.showMap
         then div [ style myStyle, id "map" ] []
-        else div [ id "map" ] []
+        else span [] []
   in
   div []
     [ mapEl

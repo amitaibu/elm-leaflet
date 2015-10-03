@@ -3,7 +3,7 @@
 var elmApp = Elm.fullscreen(Elm.Main, {selectMarker: null});
 
 // Maintain the map and marker state.
-var mapEl = undefined;
+var mapEl = addMap();
 var markersEl = {};
 
 var defaultIcon = L.icon({
@@ -17,20 +17,30 @@ var selectedIcon = L.icon({
 });
 
 elmApp.ports.mapManager.subscribe(function(model) {
-  mapEl = mapEl || addMap();
-
-  model.markers.forEach(function(marker) {
-    if (!markersEl[marker.id]) {
-      markersEl[marker.id] = L.marker([marker.lat, marker.lng]).addTo(mapEl);
-      selectMarker(markersEl[marker.id], marker.id);
-    }
-    else {
-      markersEl[marker.id].setLatLng([marker.lat, marker.lng]);
+  // We use timeout, to let virtual-dom add the div we need to bind to.
+  setTimeout(function () {
+    if (!model.showMap && !!mapEl) {
+      mapEl.remove();
+      mapEl = undefined;
+      return;
     }
 
-    // Set the marker's icon.
-    markersEl[marker.id].setIcon(!!model.selectedMarker && model.selectedMarker === marker.id ? selectedIcon : defaultIcon);
-  });
+    mapEl = mapEl || addMap();
+
+    model.markers.forEach(function(marker) {
+      if (!markersEl[marker.id]) {
+        markersEl[marker.id] = L.marker([marker.lat, marker.lng]).addTo(mapEl);
+        selectMarker(markersEl[marker.id], marker.id);
+      }
+      else {
+        markersEl[marker.id].setLatLng([marker.lat, marker.lng]);
+      }
+
+      // Set the marker's icon.
+      markersEl[marker.id].setIcon(!!model.selectedMarker && model.selectedMarker === marker.id ? selectedIcon : defaultIcon);
+    });
+  }, 50);
+
 });
 
 /**
