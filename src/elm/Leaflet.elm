@@ -9,8 +9,6 @@ import Json.Decode as Json exposing ((:=))
 import String exposing (length)
 import Task exposing (map)
 
-import Debug
-
 -- MODEL
 
 type alias Marker =
