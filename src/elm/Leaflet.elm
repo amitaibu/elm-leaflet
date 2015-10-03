@@ -86,10 +86,10 @@ view address model =
     [ mapEl
     , button [ onClick address ToggleMap ] [ text "Toggle Map" ]
     , button
-      [ onClick address UnselectMarker
-      , disabled (model.selectedMarker == Nothing)
-      ]
-      [ text "Unselect Marker" ]
+        [ onClick address UnselectMarker
+        , disabled (model.selectedMarker == Nothing)
+        ]
+        [ text "Unselect Marker" ]
     ]
 
 myStyle : List (String, String)
