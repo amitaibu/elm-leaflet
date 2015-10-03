@@ -2,8 +2,13 @@
 
 var elmApp = Elm.fullscreen(Elm.Main, {selectMarker: null});
 
+// @todo: Remove this hack, that make sure that the map with appear on first
+// load, as the subscribe to port is triggered only on the first change of
+// model, and not when it is initialized.
+elmApp.ports.selectMarker.send(null);
+
 // Maintain the map and marker state.
-var mapEl = addMap();
+var mapEl = undefined;
 var markersEl = {};
 
 var defaultIcon = L.icon({
@@ -22,6 +27,7 @@ elmApp.ports.mapManager.subscribe(function(model) {
     if (!model.showMap && !!mapEl) {
       mapEl.remove();
       mapEl = undefined;
+      markersEl = {};
       return;
     }
 
