@@ -9,12 +9,15 @@ import Json.Decode as Json exposing ((:=))
 import String exposing (length)
 import Task exposing (map)
 
+import Debug
+
 
 -- MODEL
 
 type alias Marker =
   { lat: Float
   , lng : Float
+  , selected : Bool
   }
 
 type alias Model =
@@ -23,9 +26,17 @@ type alias Model =
   }
 
 
+initialMarker : Marker
+initialMarker =
+  { lat = 51.5
+  , lng = -0.09
+  , selected = False
+  }
+
+
 initialModel : Model
 initialModel =
-  { marker = Marker 51.5 -0.09
+  { marker = initialMarker
   , showMap = True
   }
 
@@ -43,6 +54,7 @@ type Action
   | IncrementLng Float
   | Tick
   | Toggle
+  | ToggleMarker Bool
 
 
 update : Action -> Model -> (Model, Effects Action)
@@ -77,6 +89,16 @@ update action model =
       ( { model | showMap <- (not model.showMap) }
       , Effects.none
       )
+
+    ToggleMarker val ->
+      let
+        marker = model.marker
+        marker' = { marker | selected <- not model.marker.selected }
+      in
+      ( { model | marker <- marker' }
+      , Effects.none
+      )
+
 
 -- VIEW
 

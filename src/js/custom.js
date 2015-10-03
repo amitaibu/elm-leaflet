@@ -1,21 +1,46 @@
 "use strict";
 
-var elmApp = Elm.fullscreen(Elm.Main, {});
+var elmApp = Elm.fullscreen(Elm.Main, {markerEvents: false});
 
 // Maintain the map and marker state.
 var mapEl = undefined;
 var markerEl = undefined;
+
+var defaultIcon = L.icon({
+  iconRetinaUrl: 'default@2x.png',
+  iconSize: [35, 46]
+});
+
+var selectedIcon = L.icon({
+  iconRetinaUrl: 'selected@2x.png',
+  iconSize: [35, 46]
+});
 
 elmApp.ports.setMarker.subscribe(function(marker) {
   mapEl = mapEl || addMap();
 
   if (!markerEl) {
     markerEl = L.marker([marker.lat, marker.lng]).addTo(mapEl);
+    markerEvents(markerEl);
   }
   else {
     markerEl.setLatLng([marker.lat, marker.lng]);
   }
+
+  // Set the marker's icon.
+  markerEl.setIcon(!!marker.selected ? selectedIcon : defaultIcon);
 });
+
+/**
+ * Send marker click event to Elm.
+ */
+function markerEvents(markerEl) {
+  markerEl.on('click', function(e) {
+    elmApp.ports.markerEvents.send(true);
+  });
+}
+
+
 
 function addMap() {
   // Leaflet
