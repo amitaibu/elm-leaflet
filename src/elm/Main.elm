@@ -11,23 +11,18 @@ app =
     { init = Leaflet.init
     , update = Leaflet.update
     , view = Leaflet.view
-    , inputs = [Signal.map Leaflet.ToggleMarker markerEvents]
+    , inputs = [Signal.map Leaflet.ToggleMarker selectMarker]
     }
 
 main =
   app.html
-
-markerSignal : Signal Leaflet.Marker
-markerSignal =
-  Signal.map .marker app.model
-
 
 port tasks : Signal (Task.Task Never ())
 port tasks =
   app.tasks
 
 -- interactions with Leaflet
-port setMarker : Signal Leaflet.Marker
-port setMarker = markerSignal
+port mapManager : Signal Leaflet.Model
+port mapManager = app.model
 
-port markerEvents : Signal Bool
+port selectMarker : Signal (Maybe Int)

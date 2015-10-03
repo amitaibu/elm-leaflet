@@ -11,91 +11,59 @@ import Task exposing (map)
 
 import Debug
 
-
 -- MODEL
 
 type alias Marker =
-  { lat: Float
+  { id : Int
+  , lat : Float
   , lng : Float
-  , selected : Bool
   }
 
 type alias Model =
-  { marker : Marker
+  { markers : List Marker
+  , selectedMarker : Maybe Int
   , showMap : Bool
   }
 
 
-initialMarker : Marker
-initialMarker =
-  { lat = 51.5
-  , lng = -0.09
-  , selected = False
-  }
-
+initialMarkers : List Marker
+initialMarkers =
+  [ Marker 1 51.5 -0.09
+  , Marker 2 51.6 -0.09
+  , Marker 3 51.7 -0.09
+  ]
 
 initialModel : Model
 initialModel =
-  { marker = initialMarker
+  { markers = initialMarkers
+  , selectedMarker = Nothing
   , showMap = True
   }
 
 init : (Model, Effects Action)
 init =
   ( initialModel
-  , Effects.batch [tick]
+  , Effects.none
   )
 
 
 -- UPDATE
 
 type Action
-  = IncrementLat Float
-  | IncrementLng Float
-  | Tick
-  | Toggle
-  | ToggleMarker Bool
+  = ToggleMap
+  | ToggleMarker (Maybe Int)
 
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    IncrementLat val ->
-      let
-        marker = model.marker
-        marker' = { marker | lat <- marker.lat + val }
-      in
-        ( { model | marker <- marker' }
-        , Effects.none
-        )
-
-    IncrementLng val ->
-      let
-        marker = model.marker
-        marker' = { marker | lng <- marker.lng + val }
-      in
-        ( { model | marker <- marker' }
-        , Effects.none
-        )
-
-    Tick ->
-      let
-        (model', _) = update (IncrementLat 0.001) model
-        (model'', _) = update (IncrementLng 0.001) model'
-      in
-        (model'', Effects.none)
-
-    Toggle ->
+    ToggleMap ->
       ( { model | showMap <- (not model.showMap) }
       , Effects.none
       )
 
     ToggleMarker val ->
-      let
-        marker = model.marker
-        marker' = { marker | selected <- not model.marker.selected }
-      in
-      ( { model | marker <- marker' }
+      ( { model | selectedMarker <- val }
       , Effects.none
       )
 
@@ -114,10 +82,7 @@ view address model =
   in
   div []
     [ mapEl
-    , div [] [text ("Lat: " ++ toString(model.marker.lat))]
-    , div [] [text ("Lng: " ++ toString(model.marker.lng))]
-    , button [ onClick address Toggle ] [ text "Toggle Map" ]
-    , div [] [ text ("Toggle state:" ++ toString(model.showMap))]
+    , button [ onClick address ToggleMap ] [ text "Toggle Map" ]
     ]
 
 
@@ -127,11 +92,3 @@ myStyle =
     [ ("width", "600px")
     , ("height", "400px")
     ]
-
--- EFFECTS
-
-tick : Effects Action
-tick =
-  Task.sleep (1 * 1000)
-    |> Task.map (\_ -> Tick)
-    |> Effects.task

@@ -1,10 +1,10 @@
 "use strict";
 
-var elmApp = Elm.fullscreen(Elm.Main, {markerEvents: false});
+var elmApp = Elm.fullscreen(Elm.Main, {selectMarker: null});
 
 // Maintain the map and marker state.
 var mapEl = undefined;
-var markerEl = undefined;
+var markersEl = {};
 
 var defaultIcon = L.icon({
   iconRetinaUrl: 'default@2x.png',
@@ -16,32 +16,35 @@ var selectedIcon = L.icon({
   iconSize: [35, 46]
 });
 
-elmApp.ports.setMarker.subscribe(function(marker) {
+elmApp.ports.mapManager.subscribe(function(model) {
   mapEl = mapEl || addMap();
 
-  if (!markerEl) {
-    markerEl = L.marker([marker.lat, marker.lng]).addTo(mapEl);
-    markerEvents(markerEl);
-  }
-  else {
-    markerEl.setLatLng([marker.lat, marker.lng]);
-  }
+  model.markers.forEach(function(marker) {
+    if (!markersEl[marker.id]) {
+      markersEl[marker.id] = L.marker([marker.lat, marker.lng]).addTo(mapEl);
+      selectMarker(markersEl[marker.id], marker.id);
+    }
+    else {
+      markersEl[marker.id].setLatLng([marker.lat, marker.lng]);
+    }
 
-  // Set the marker's icon.
-  markerEl.setIcon(!!marker.selected ? selectedIcon : defaultIcon);
+    // Set the marker's icon.
+    markersEl[marker.id].setIcon(!!model.selectedMarker && model.selectedMarker === marker.id ? selectedIcon : defaultIcon);
+  });
 });
 
 /**
  * Send marker click event to Elm.
  */
-function markerEvents(markerEl) {
+function selectMarker(markerEl, id) {
   markerEl.on('click', function(e) {
-    elmApp.ports.markerEvents.send(true);
+    elmApp.ports.selectMarker.send(id);
   });
 }
 
-
-
+/**
+ * Initialize a Leaflet map.
+ */
 function addMap() {
   // Leaflet
   var mapEl = L.map('map').setView([51.505, -0.09], 10);
