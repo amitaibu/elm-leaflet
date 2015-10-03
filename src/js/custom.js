@@ -2,7 +2,7 @@
 
 var elmApp = Elm.fullscreen(Elm.Main, {selectMarker: null});
 
-// @todo: Remove this hack, that make sure that the map with appear on first
+// @todo: Remove this hack, that makes sure that the map will appear on first
 // load, as the subscribe to port is triggered only on the first change of
 // model, and not when it is initialized.
 elmApp.ports.selectMarker.send(null);
