@@ -188,10 +188,10 @@ gulp.task("serve:prod", function () {
 });
 
 // Default task, run when just writing "gulp" in the terminal
-gulp.task("default", ["clean:dev", "serve:dev", "watch"]);
+gulp.task("default", ["build", "serve:dev", "watch"]);
 
 // Builds the site but doesnt serve it to you
-gulp.task("build", ["clean:dev", "copy:dev", "elm", "styles"], function () {});
+gulp.task("build", ["clean:dev", "styles", "copy:dev", "elm"], function () {});
 
 // Builds your site with the "build" command and then runs all the optimizations on
 // it and outputs it to "./dist"
